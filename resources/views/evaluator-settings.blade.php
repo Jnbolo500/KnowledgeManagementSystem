@@ -55,7 +55,7 @@
         .mobile-sidebar{ height:100vh; height:100dvh; width:0; position:fixed; top:0; left:0; background:linear-gradient(180deg, var(--primary-blue) 0%, var(--secondary-blue) 100%); overflow-x:hidden; overflow-y:auto; -webkit-overflow-scrolling:touch; overscroll-behavior:contain; touch-action:pan-y; transition:var(--transition); z-index:1050; padding-top:60px; padding-bottom:calc(24px + env(safe-area-inset-bottom)); }
         .mobile-sidebar a{ display:block; color:white; padding:15px 20px; text-decoration:none; font-weight:500; margin:5px 15px; border-radius:8px; transition: var(--transition); }
         .mobile-sidebar a:hover, .mobile-sidebar a.active{ background:rgba(255,255,255,0.2); transform:translateX(5px); }
-        .mobile-sidebar a .nav-badge {
+        .mobile-sidebar a .nav-badge{
             background: var(--danger-red);
             color: #fff;
             border-radius: 999px;
@@ -234,15 +234,21 @@
             <a href="{{ route('evaluator.dashboard') }}"><i class="fas fa-tachometer-alt me-2"></i>Dashboard</a>
             <a href="{{ route('evaluator.research') }}">
                 <i class="fas fa-microscope me-2"></i>Research
-                <span class="nav-badge">{{ $pendingResearchCount ?? 0 }}</span>
+                @if(isset($pendingResearchCount) && $pendingResearchCount > 0)
+                    <span class="nav-badge">{{ $pendingResearchCount }}</span>
+                @endif
             </a>
             <a href="{{ route('evaluator.syllabus') }}">
                 <i class="fas fa-book me-2"></i>Syllabus
-                <span class="nav-badge">{{ $pendingSyllabusCount ?? 0 }}</span>
+                @if(isset($pendingSyllabusCount) && $pendingSyllabusCount > 0)
+                    <span class="nav-badge">{{ $pendingSyllabusCount }}</span>
+                @endif
             </a>
             <a href="{{ route('evaluator.exam') }}">
                 <i class="fas fa-clipboard-list me-2"></i>Exam Bank
-                <span class="nav-badge">{{ $pendingExamCount ?? 0 }}</span>
+                @if(isset($pendingExamCount) && $pendingExamCount > 0)
+                    <span class="nav-badge">{{ $pendingExamCount }}</span>
+                @endif
             </a>
             <a href="{{ route('settings.evaluator') }}" class="profile-section-nav active" title="Profile">
                 @if(Auth::user()->profile_picture)
@@ -270,15 +276,21 @@
     <a href="{{ route('evaluator.dashboard') }}" onclick="closeSidebar()"><i class="fas fa-tachometer-alt me-2"></i>Dashboard</a>
     <a href="{{ route('evaluator.research') }}" onclick="closeSidebar()">
         <i class="fas fa-microscope me-2"></i>Research
-        <span class="nav-badge">{{ $pendingResearchCount ?? 0 }}</span>
+        @if(isset($pendingResearchCount) && $pendingResearchCount > 0)
+            <span class="nav-badge">{{ $pendingResearchCount }}</span>
+        @endif
     </a>
     <a href="{{ route('evaluator.syllabus') }}" onclick="closeSidebar()">
         <i class="fas fa-book me-2"></i>Syllabus
-        <span class="nav-badge">{{ $pendingSyllabusCount ?? 0 }}</span>
+        @if(isset($pendingSyllabusCount) && $pendingSyllabusCount > 0)
+            <span class="nav-badge">{{ $pendingSyllabusCount }}</span>
+        @endif
     </a>
     <a href="{{ route('evaluator.exam') }}" onclick="closeSidebar()">
         <i class="fas fa-clipboard-list me-2"></i>Exam Bank
-        <span class="nav-badge">{{ $pendingExamCount ?? 0 }}</span>
+        @if(isset($pendingExamCount) && $pendingExamCount > 0)
+            <span class="nav-badge">{{ $pendingExamCount }}</span>
+        @endif
     </a>
     <a href="{{ route('settings.evaluator') }}" class="active" onclick="closeSidebar()"><i class="fas fa-user me-2"></i>Profile</a>
     <a href="{{ route('evaluator.settings.edit') }}" onclick="closeSidebar()"><i class="fas fa-user-edit me-2"></i>Edit Profile</a>
