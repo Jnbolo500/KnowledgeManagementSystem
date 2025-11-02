@@ -516,6 +516,7 @@
                                         @if ($syllabus->status === 'Approved')
                                             <a href="{{ route('faculty.syllabus.view', $syllabus->id) }}" target="_blank" class="action-btn view"><i class="fas fa-eye"></i>View</a>
                                             <a href="{{ route('faculty.syllabus.download', $syllabus->id) }}" class="action-btn download"><i class="fas fa-download"></i>Download</a>
+                                            <button type="button" class="action-btn delete" onclick="confirmDelete({{ $syllabus->id }}, {{ @json($syllabus->course_code . ' - ' . $syllabus->course_title) }})"><i class="fas fa-trash"></i>Delete</button>
                                         @else
                                             <a href="{{ route('faculty.syllabus.view', $syllabus->id) }}" target="_blank" class="action-btn view"><i class="fas fa-eye"></i>View</a>
                                         @endif
@@ -620,6 +621,38 @@
     </div>
 </div>
 
+<!-- Delete Confirmation Modal -->
+<div id="deleteModal" class="custom-modal">
+    <div class="modal-content small">
+        <div class="modal-header danger">
+            <h3 class="modal-title"><i class="fas fa-exclamation-triangle me-2"></i>Confirm Delete</h3>
+            <button class="close-modal" onclick="closeDeleteModal()"><i class="fas fa-times"></i></button>
+        </div>
+
+        <div class="modal-body text-center">
+            <div style="margin-bottom: 1.5rem;">
+                <i class="fas fa-trash-alt" style="font-size: 3rem; color: var(--danger-red); margin-bottom: 1rem;"></i>
+                <h4 style="color: var(--primary-blue); margin-bottom: 1rem;">Delete Syllabus Submission</h4>
+                <p style="color: var(--dark-gray); line-height: 1.5;">
+                    Are you sure you want to delete this syllabus? This action cannot be undone.
+                </p>
+                <div style="background: var(--light-gray); padding: 1rem; border-radius: 8px; margin: 1rem 0; border-left: 4px solid var(--danger-red);">
+                    <strong id="deleteSyllabusTitle" style="color: var(--primary-blue);">Syllabus Title</strong>
+                </div>
+            </div>
+        </div>
+
+        <div class="modal-footer">
+            <button type="button" class="modal-btn secondary" onclick="closeDeleteModal()"><i class="fas fa-times me-1"></i>Cancel</button>
+            <form id="deleteForm" method="POST" style="display: inline;">
+                @csrf
+                @method('DELETE')
+                <button type="submit" class="modal-btn danger"><i class="fas fa-trash me-1"></i>Delete</button>
+            </form>
+        </div>
+    </div>
+</div>
+
 <!-- Help / Tutorial Modal -->
 <div id="helpModal" class="custom-modal">
     <div class="modal-content">
@@ -668,6 +701,7 @@ let currentFormSubmitting = null;
 /* Pagination state */
 const PAGE_SIZE = 5;
 let currentPage = 1;
+const deleteBaseUrl = "{{ url('/evaluator/syllabus') }}";
 
 const initialSearchTermRaw = @json(request('search', ''));
 const initialYearFilterRaw = @json(request('year', ''));
@@ -724,6 +758,22 @@ function closeCommentRequiredModal() {
         if (textarea) textarea.focus();
         currentFormSubmitting = null;
     }
+}
+
+function confirmDelete(id, title){
+    const modal = document.getElementById('deleteModal');
+    const titleEl = document.getElementById('deleteSyllabusTitle');
+    const form = document.getElementById('deleteForm');
+    if(titleEl){ titleEl.textContent = title || 'Syllabus'; }
+    if(form){ form.action = `${deleteBaseUrl}/${id}`; }
+    if(modal){ modal.style.display = 'flex'; }
+    document.body.style.overflow = 'hidden';
+}
+
+function closeDeleteModal(){
+    const modal = document.getElementById('deleteModal');
+    if(modal){ modal.style.display = 'none'; }
+    document.body.style.overflow = 'auto';
 }
 
 /* Unified filtering + pagination */
@@ -928,6 +978,13 @@ document.addEventListener('DOMContentLoaded',function(){
         });
     }
 
+    const deleteModal=document.getElementById('deleteModal');
+    if(deleteModal){
+        deleteModal.addEventListener('click',function(e){
+            if(e.target===this){closeDeleteModal();}
+        });
+    }
+
     document.querySelectorAll('.comment-textarea').forEach(ta=>{
         autoResizeTextarea(ta);
         ta.addEventListener('input',function(){autoResizeTextarea(this)});
@@ -970,11 +1027,23 @@ document.addEventListener('DOMContentLoaded',function(){
         });
     }
 
+    const deleteForm = document.getElementById('deleteForm');
+    if(deleteForm){
+        deleteForm.addEventListener('submit', function(){
+            const submitBtn = this.querySelector('button[type="submit"]');
+            if(submitBtn){
+                submitBtn.innerHTML = '<i class="fas fa-spinner fa-spin me-1"></i>Deleting...';
+                submitBtn.disabled = true;
+            }
+        });
+    }
+
     document.addEventListener('keydown',function(e){
         if(e.key==='Escape'){
             closeSidebar();
             closeLogoutModal();
             closeCommentRequiredModal();
+            closeDeleteModal();
             closeHelpModal();
             ['flashSuccess','flashError'].forEach(id=>{
                 const el=document.getElementById(id);
