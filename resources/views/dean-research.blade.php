@@ -725,6 +725,15 @@
                                 </td>
                             </tr>
                         @endforelse
+                        <tr id="clientEmptyRow" style="display:none;">
+                            <td colspan="12">
+                                <div class="empty-state">
+                                    <i class="fas fa-microscope"></i>
+                                    <h4 id="clientEmptyTitle">No Research Found</h4>
+                                    <p id="clientEmptyMessage">No research submissions match your filters.</p>
+                                </div>
+                            </td>
+                        </tr>
                     </tbody>
                 </table>
             </div>
