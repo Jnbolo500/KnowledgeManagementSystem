@@ -516,7 +516,7 @@
                                         @if ($syllabus->status === 'Approved')
                                             <a href="{{ route('faculty.syllabus.view', $syllabus->id) }}" target="_blank" class="action-btn view"><i class="fas fa-eye"></i>View</a>
                                             <a href="{{ route('faculty.syllabus.download', $syllabus->id) }}" class="action-btn download"><i class="fas fa-download"></i>Download</a>
-                                            <button type="button" class="action-btn delete" onclick="confirmDelete({{ $syllabus->id }}, {{ @json($syllabus->course_code . ' - ' . $syllabus->course_title) }})"><i class="fas fa-trash"></i>Delete</button>
+                                            <button type="button" class="action-btn delete" onclick='confirmDelete({{ $syllabus->id }}, @json($syllabus->course_code . " - " . $syllabus->course_title))'><i class="fas fa-trash"></i>Delete</button>
                                         @else
                                             <a href="{{ route('faculty.syllabus.view', $syllabus->id) }}" target="_blank" class="action-btn view"><i class="fas fa-eye"></i>View</a>
                                         @endif
